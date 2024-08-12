@@ -9,6 +9,7 @@
 <!-- End footer Area -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
+  var fetched = false;
 	var map = L.map('map').setView([-7.5675, 110.8214], 13);
 
 	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -39,13 +40,18 @@
               ${wisata.jenis}
             </div>
           `).on('click', function() {
-            console.log('alert')
-            document.location.href="<?= url('/detail.php') ?>?id_wisata="+wisata.id_wisata;
-            // fetch('<?= url('/user/view-wisata.php') ?>?lat='+wisata.latitude+'&lng='+wisata.longitude).then((resp) => {
-            //   return resp.text();
-            // }).then(data => {
-            //   $('.map-detail .row').html(data)
-            // })  
+            if (fetched) {
+              fetched = false;
+              $('.map-detail .row').text('')
+              return;
+            }
+            // document.location.href="<?= url('/detail.php') ?>?id_wisata="+wisata.id_wisata;
+            fetch('<?= url('/user/view-wisata-detail.php') ?>?lat='+wisata.latitude+'&lng='+wisata.longitude+'&id_wisata='+wisata.id_wisata).then((resp) => {
+              return resp.text();
+            }).then(data => {
+              fetched = true;
+              $('.map-detail .row').html(data)
+            })  
           }).on('mouseover',function(ev) {
             ev.target.openPopup();
           }).on('mouseout',function(ev) {
